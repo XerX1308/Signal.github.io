@@ -70,6 +70,7 @@
     a { color: inherit; text-decoration: none; }
     img { display: block; max-width: 100%; }
 
+    /* ── LAYOUT ── */
     .site {
       position: relative; z-index: 1;
       min-height: 100svh;
@@ -77,6 +78,7 @@
       display: flex; flex-direction: column; align-items: center;
     }
 
+    /* ── TOP BAR ── */
     .top-bar {
       width: 100%;
       display: grid;
@@ -116,6 +118,7 @@
       font-weight: 900;
     }
 
+    /* ── LANGUAGE BUTTON ── */
     .lang-toggle {
       grid-column: 3;
       justify-self: end;
@@ -206,6 +209,7 @@
       line-height: 1;
     }
 
+    /* ── LIBRARY ── */
     .library {
       width: 100%;
       display: flex;
@@ -277,6 +281,7 @@
     .game-card:hover .game-label,
     .game-card:focus-visible .game-label { opacity: 1; transform: translateY(0); }
 
+    /* ── DONATE ── */
     .donate-bar {
       width: 100%;
       display: flex;
@@ -336,8 +341,8 @@
 <body>
   
   <div style="display:none;" aria-hidden="true">
-    <h1>Signal - Games</h1>
-    <p>Hand-coded minimalist web experiences by xerx1308.</p>
+    <h1>Signal - Interactive Games</h1>
+    <p>Minimalist experiences by xerx1308.</p>
   </div>
 
   <main class="site">
@@ -386,7 +391,7 @@
     <section class="library" aria-label="Games">
       <div class="games-grid">
         <a class="game-card" href="./capital.html">
-          <img src="./assets/capital-cover.jpeg" alt="Capital">
+          <img src="./assets/capital-cover.jpeg" alt="Capital game cover">
           <span class="game-label" data-i18n="game-capital">Capital</span>
         </a>
       </div>
@@ -424,7 +429,7 @@
       en: { label: 'EN', 'donate-label': 'Support the project', 'donate-btn': 'Support Signal', 'game-capital': 'Capital' },
       fr: { label: 'FR', 'donate-label': 'Soutenir le projet', 'donate-btn': 'Soutenir Signal', 'game-capital': 'Capital' },
       es: { label: 'ES', 'donate-label': 'Apoyar el proyecto', 'donate-btn': 'Apoyar Signal', 'game-capital': 'Capital' },
-      ru: { label: 'РУ', 'donate-label': 'Поддержать проект', 'donate-btn': 'Поддержать Signal', 'game-capital': 'Капитал' },
+      ru: { label: 'РУ', 'donate-label': 'Поддержать projet', 'donate-btn': 'Поддержать Signal', 'game-capital': 'Капитал' },
     };
 
     function applyLang(lang) {
@@ -458,6 +463,7 @@
         e.stopPropagation();
         applyLang(opt.dataset.lang);
         toggle.classList.remove('open');
+        langBtn.setAttribute('aria-expanded', 'false');
       });
     });
 
