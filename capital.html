@@ -708,13 +708,13 @@ const ACHIEVEMENTS = [
    CLICK UPGRADES DATA
 ═══════════════════════════════════════════════ */
 const CLICK_UPGRADES = [
-  { id:'cu1', icon:'✍️', mult:3,  cost:()=>500,          minClicks:5   },
-  { id:'cu2', icon:'🖊️', mult:4,  cost:()=>8000,         minClicks:20  },
-  { id:'cu3', icon:'📋', mult:6,  cost:()=>120000,       minClicks:50  },
-  { id:'cu4', icon:'📊', mult:10, cost:()=>2000000,      minClicks:100 },
-  { id:'cu5', icon:'💼', mult:18, cost:()=>50000000,     minClicks:200 },
-  { id:'cu6', icon:'🏦', mult:30, cost:()=>1500000000,   minClicks:500 },
-  { id:'cu7', icon:'🏛️', mult:50, cost:()=>80000000000,  minClicks:1000},
+  { id:'cu1', icon:'✍️', mult:3,  cost:()=>500         },
+  { id:'cu2', icon:'🖊️', mult:4,  cost:()=>8000        },
+  { id:'cu3', icon:'📋', mult:6,  cost:()=>120000      },
+  { id:'cu4', icon:'📊', mult:10, cost:()=>2000000     },
+  { id:'cu5', icon:'💼', mult:18, cost:()=>50000000    },
+  { id:'cu6', icon:'🏦', mult:30, cost:()=>1500000000  },
+  { id:'cu7', icon:'🏛️', mult:50, cost:()=>80000000000 },
 ];
 
 const CLICK_UPG_TEXT = {
@@ -771,26 +771,18 @@ function getClickMult() {
 function buildClickUpgList() {
   const container = document.getElementById('click-upg-list');
   container.innerHTML = '';
-  // Affiche le premier non-acheté visible (par minClicks OU si le précédent vient d'être acheté)
-  let shownNext = false;
-  CLICK_UPGRADES.forEach((upg, idx) => {
-    if (clickUpgBought.has(upg.id)) return;
-    // Visible si : assez de clics, OU si c'est le suivant direct après le dernier acheté
-    const prevBought = idx === 0 || clickUpgBought.has(CLICK_UPGRADES[idx - 1].id);
-    const enoughClicks = totalClicks >= upg.minClicks;
-    if (!enoughClicks && !prevBought) return;
-    if (shownNext && !enoughClicks) return; // n'affiche qu'un seul "prochain" à la fois
-    if (!enoughClicks) shownNext = true;
-    const t = tClickUpg(upg);
-    const cost = upg.cost();
-    const btn = document.createElement('button');
-    btn.className = 'click-upg';
-    btn.id = 'cu_' + upg.id;
-    btn.innerHTML = `<span class="cu-icon">${upg.icon}</span><div class="cu-body"><div class="cu-name">${t.name}</div><div class="cu-stat">${t.stat}</div><div class="cu-cost">$${fmtM(cost)}</div></div>`;
-    btn.disabled = money < cost;
-    btn.onclick = () => buyClickUpg(upg.id);
-    container.appendChild(btn);
-  });
+  // Affiche uniquement le prochain upgrade non-acheté
+  const next = CLICK_UPGRADES.find(upg => !clickUpgBought.has(upg.id));
+  if (!next) return;
+  const t = tClickUpg(next);
+  const cost = next.cost();
+  const btn = document.createElement('button');
+  btn.className = 'click-upg';
+  btn.id = 'cu_' + next.id;
+  btn.innerHTML = `<span class="cu-icon">${next.icon}</span><div class="cu-body"><div class="cu-name">${t.name}</div><div class="cu-stat">${t.stat}</div><div class="cu-cost">$${fmtM(cost)}</div></div>`;
+  btn.disabled = money < cost;
+  btn.onclick = () => buyClickUpg(next.id);
+  container.appendChild(btn);
 }
 
 function buyClickUpg(id) {
@@ -809,19 +801,11 @@ function buyClickUpg(id) {
 }
 
 function refreshClickUpgList() {
-  let needRebuild = false;
-  CLICK_UPGRADES.forEach((upg, idx) => {
-    if (clickUpgBought.has(upg.id)) return;
-    const prevBought = idx === 0 || clickUpgBought.has(CLICK_UPGRADES[idx - 1].id);
-    if ((totalClicks >= upg.minClicks || prevBought) && !document.getElementById('cu_' + upg.id)) needRebuild = true;
-  });
-  if (needRebuild) buildClickUpgList();
-  else {
-    CLICK_UPGRADES.forEach(upg => {
-      const btn = document.getElementById('cu_' + upg.id);
-      if (btn) btn.disabled = money < upg.cost();
-    });
-  }
+  const next = CLICK_UPGRADES.find(upg => !clickUpgBought.has(upg.id));
+  if (!next) return;
+  const btn = document.getElementById('cu_' + next.id);
+  if (!btn) buildClickUpgList();
+  else btn.disabled = money < next.cost();
 }
 
 /* Sprint */
